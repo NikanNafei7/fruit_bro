@@ -1,60 +1,67 @@
 import pygame
-import OpenGL.GL as gl
-import imgui
-from imgui.integrations.pygame import PygameRenderer
+import pygame_gui
 import sys
 import os
 import random
 
+pygame.init()
+
 size = 1200, 800
-pygame.display.set_mode(size, pygame.OPENGL | pygame.DOUBLEBUF)
+screen = pygame.display.set_mode(size)
 pygame.display.set_caption("fruit bro")
-
-imgui.create_context()
-
-io = imgui.get_io()
-io.display_size = size
-
-renderer = PygameRenderer()
 
 clock = pygame.time.Clock()
 
-r_1to4 = random.randint(1, 4)
+BASE_DIR = os.path.dirname(__file__)
+
+rand_1to4 = random.randint(1, 4)
 def background(number):
     backgrounds = {
-        1:(0/255.0, 51/255.0, 34/255.0, 1), #dark green
-        2:(123/255.0, 129/255.0, 32/255.0, 1.0), #yellow
-        3:(51/255.0, 0/255.0, 102/255.0, 1.0), #purple
-        4:(0/255.0, 0/255.0, 102/255.0, 1.0), #dark blue
+        1:(0, 51, 34), #dark green
+        2:(123, 129, 32), #yellow
+        3:(51, 0, 102), #purple
+        4:(0, 0, 102), #dark blue
     }
-    gl.glClearColor(*backgrounds[number])
+    screen.fill(backgrounds.get(number))
+
+rand_1to3 = random.randint(1, 3)
+rocks_list = []
+def rock(number):
+    rock1_path = os.path.join(BASE_DIR, "images", "rock1.png") #X=101 , Y=64
+    rock2_path = os.path.join(BASE_DIR, "images", "rock2.png") #X=101 , Y=64
+    rock3_path = os.path.join(BASE_DIR, "images", "rock3.png") #X=101 , Y=64
+    rock1_img = pygame.image.load(rock1_path).convert_alpha()
+    rock2_img = pygame.image.load(rock2_path).convert_alpha()
+    rock3_img = pygame.image.load(rock3_path).convert_alpha()
+    rocks = {
+        1:rock1_img,
+        2:rock2_img,
+        3:rock3_img,
+    }
+    for i in range(37):
+        rock_x = random.randint(0, 1099)
+        rock_y = random.randint(0, 736)
+        rocks_list.append((rocks.get(number), (rock_x, rock_y)))
+
+def show_rock():
+    for rock_img, pos in rocks_list:
+        screen.blit(rock_img, pos)
 
 
 def main():
     pass
+
+rock(rand_1to3)
 
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        renderer.process_event(event)
-    
-    imgui.new_frame()
-    renderer.process_inputs()
 
-    imgui.begin("shop")
-
-    imgui.text("hello")
-
-    imgui.end()
-
-    background(r_1to4)
-    gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-    imgui.render()
-    renderer.render(imgui.get_draw_data())
+    background(rand_1to4)
+    show_rock()
     pygame.display.flip()
     clock.tick(60)
 
-renderer.shutdown()
 pygame.quit()
