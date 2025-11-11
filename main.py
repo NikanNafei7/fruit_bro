@@ -38,8 +38,9 @@ characters = {
     4:pear_img
 }
     
-def character(number, pos):
-    screen.blit(characters.get(number), pos)
+def character(number):
+    character_rect = characters.get(number).get_rect(center=(600, 400))
+    screen.blit(characters.get(number), character_rect)
 
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
@@ -88,7 +89,6 @@ class Enemy:
 
 def play():
     rock(rand_1to4_r)
-    character(character_num, (0, 0))
 
     global running
     while running:
@@ -98,7 +98,7 @@ def play():
 
         background(rand_1to4_b)
         show_rock()
-        character(character_num, (0, 0))
+        character(character_num)
         pygame.display.update()
         clock.tick(60)
 
