@@ -31,16 +31,45 @@ tomato_img = pygame.image.load(tomato_path)
 watermelon_img = pygame.image.load(watermelon_path)
 lemon_img = pygame.image.load(lemon_path)
 pear_img = pygame.image.load(pear_path)
+
 characters = {
-    1:tomato_img,
-    2:watermelon_img,
-    3:lemon_img,
-    4:pear_img
+    1: tomato_img,
+    2: watermelon_img,
+    3: lemon_img,
+    4: pear_img
 }
-    
+
+player_rect = None
+
+def init_character_rect(number):
+    global player_rect
+    player_rect = characters[number].get_rect(center=(600, 400))
+
+
 def character(number):
-    character_rect = characters.get(number).get_rect(center=(600, 400))
-    screen.blit(characters.get(number), character_rect)
+    global player_rect
+
+    screen.blit(characters[number], player_rect)
+
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        player_rect.x += 3
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        player_rect.x -= 3
+    if keys[pygame.K_UP] or keys[pygame.K_w]:
+        player_rect.y -= 3
+    if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        player_rect.y += 3
+    if player_rect.x > 1134:
+        player_rect.x = 1134
+    if player_rect.x < 0:
+        player_rect.x = 0
+    if player_rect.y > 734:
+        player_rect.y = 734
+    if player_rect.y < 0:
+        player_rect.y = 0 
+
 
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
@@ -48,29 +77,29 @@ def get_font(size):
 rand_1to4_b = random.randint(1, 4)
 def background(number):
     backgrounds = {
-        1:(0, 51, 34), #dark green
-        2:(123, 129, 32), #yellow
-        3:(51, 0, 102), #purple
-        4:(0, 0, 102), #dark blue
+        1:(0, 51, 34),
+        2:(123, 129, 32),
+        3:(51, 0, 102),
+        4:(0, 0, 102),
     }
     screen.fill(backgrounds.get(number))
 
 rand_1to4_r = random.randint(1, 4)
 rocks_list = []
 def rock(number):
-    rock1_path = os.path.join(BASE_DIR, "assets", "rock1.png") #X=101 , Y=64
-    rock2_path = os.path.join(BASE_DIR, "assets", "rock2.png") #X=101 , Y=64
-    rock3_path = os.path.join(BASE_DIR, "assets", "rock3.png") #X=101 , Y=64
-    rock4_path = os.path.join(BASE_DIR, "assets", "rock4.png") #X=101 , Y=64
+    rock1_path = os.path.join(BASE_DIR, "assets", "rock1.png")
+    rock2_path = os.path.join(BASE_DIR, "assets", "rock2.png")
+    rock3_path = os.path.join(BASE_DIR, "assets", "rock3.png")
+    rock4_path = os.path.join(BASE_DIR, "assets", "rock4.png")
     rock1_img = pygame.image.load(rock1_path).convert_alpha()
     rock2_img = pygame.image.load(rock2_path).convert_alpha()
     rock3_img = pygame.image.load(rock3_path).convert_alpha()
     rock4_img = pygame.image.load(rock4_path).convert_alpha()
     rocks = {
-        1:rock1_img,
-        2:rock2_img,
-        3:rock3_img,
-        4:rock4_img,
+        1: rock1_img,
+        2: rock2_img,
+        3: rock3_img,
+        4: rock4_img,
     }
     for i in range(40):
         rock_x = random.randint(0, 1099)
@@ -103,6 +132,7 @@ def play():
         clock.tick(60)
 
 character_num = 0
+
 def character_select(number):
     global character_num
     global running
@@ -135,15 +165,19 @@ def character_select(number):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if TOMATO_BUTTON.checkForInput(MENU_MOUSE_POS):
                     character_num = 1
+                    init_character_rect(1)   
                     play()
                 if WATERMELON_BUTTON.checkForInput(MENU_MOUSE_POS):
                     character_num = 2
+                    init_character_rect(2)   
                     play()
                 if LEMON_BUTTON.checkForInput(MENU_MOUSE_POS):
                     character_num = 3
+                    init_character_rect(3)   
                     play()
                 if PEAR_BUTTON.checkForInput(MENU_MOUSE_POS):
                     character_num = 4
+                    init_character_rect(4)   
                     play()
 
         pygame.display.update()
